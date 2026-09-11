@@ -1,0 +1,21 @@
+{
+  "crs": "GNW",
+  "station": "Greenwich",
+  "services": [
+    {
+      "scheduled": "13:41",
+      "expected": "13:49",
+      "destination": "London Cannon Street",
+      "platform": "1",
+      "disrupted": true
+    },
+    {
+      "scheduled": "13:52",
+      "expected": "Cancelled",
+      "destination": "Dartford",
+      "platform": "2",
+      "disrupted": true
+    }
+  ],
+  "attribution": "Powered by National Rail Enquiries"
+}

@@ -1,0 +1,12 @@
+{
+  "locationName": "New Brighton",
+  "trainServices": [
+    {
+      "std": "13:08",
+      "etd": "On time",
+      "platform": "2",
+      "isCancelled": false,
+      "destination": [{"locationName": "Liverpool Central"}]
+    }
+  ]
+}

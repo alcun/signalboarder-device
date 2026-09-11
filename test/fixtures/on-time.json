@@ -1,0 +1,30 @@
+{
+  "crs": "NBN",
+  "station": "New Brighton",
+  "services": [
+    {
+      "scheduled": "13:08",
+      "expected": "On time",
+      "destination": "Liverpool Central",
+      "platform": "2",
+      "disrupted": false,
+      "callingAt": ["Wallasey Grove Road", "Birkenhead North", "Liverpool Central"]
+    },
+    {
+      "scheduled": "13:23",
+      "expected": "On time",
+      "destination": "Liverpool Central",
+      "platform": "2",
+      "disrupted": false,
+      "callingAt": ["Wallasey Grove Road", "Birkenhead North", "Liverpool Central"]
+    },
+    {
+      "scheduled": "13:38",
+      "expected": "On time",
+      "destination": "Liverpool Central",
+      "platform": "2",
+      "disrupted": false
+    }
+  ],
+  "attribution": "Powered by National Rail Enquiries"
+}

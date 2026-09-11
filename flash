@@ -1,0 +1,75 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# PlatformIO, however this machine prefers to get it. A Mac with Homebrew was
+# never the only way to own one of these boards.
+if ! command -v pio >/dev/null 2>&1; then
+  # An earlier install may be there without being on PATH.
+  for candidate in "$HOME/.platformio/penv/bin/pio" "$HOME/.local/bin/pio"; do
+    if [[ -x "$candidate" ]]; then
+      PATH="$(dirname "$candidate"):$PATH"
+      break
+    fi
+  done
+fi
+
+if ! command -v pio >/dev/null 2>&1; then
+  if [[ "$(uname -s)" == "Darwin" ]] && command -v brew >/dev/null 2>&1; then
+    echo "Installing PlatformIO with Homebrew..."
+    brew install platformio
+  elif command -v pipx >/dev/null 2>&1; then
+    echo "Installing PlatformIO with pipx..."
+    pipx install platformio
+  elif command -v python3 >/dev/null 2>&1; then
+    echo "Installing PlatformIO for this user with pip..."
+    python3 -m pip install --user --upgrade platformio
+    PATH="$HOME/.local/bin:$PATH"
+  else
+    echo "PlatformIO is required: https://platformio.org/install/cli"
+    echo "Install it once, then run ./flash again."
+    exit 1
+  fi
+fi
+
+if ! command -v pio >/dev/null 2>&1; then
+  echo "PlatformIO installed but is not on PATH. Open a new terminal and run"
+  echo "./flash again, or see https://platformio.org/install/cli"
+  exit 1
+fi
+
+# Linux ships no udev rule for these boards by default, and the failure it
+# produces is a permission error at the very end of a two-minute build.
+if [[ "$(uname -s)" == "Linux" && ! -e /etc/udev/rules.d/99-platformio-udev.rules ]]; then
+  echo "Note: on Linux the board needs udev rules and your user in the dialout"
+  echo "group, or the upload fails with a permission error. See"
+  echo "https://docs.platformio.org/en/latest/core/installation/udev-rules.html"
+  echo
+fi
+
+hosted_url='https://signalboarder.alcun.dev'
+# Enter defaults to the hosted service on purpose. The departure data is public
+# timetable information, the service is budget-capped and rate-limited, and Rail
+# Data Marketplace registration is a multi-step signup that would lose most
+# people at the door. A board that works out of the box is the point.
+printf 'Signalboarder server URL [%s]: ' "$hosted_url"
+IFS= read -r api_url
+api_url="${api_url:-$hosted_url}"
+
+if [[ ! "$api_url" =~ ^https://[^/]+/?$ ]]; then
+  echo "Enter the HTTPS origin only, for example $hosted_url"
+  exit 1
+fi
+
+echo
+pio device list
+echo
+printf 'This replaces firmware on the connected supported board. Continue? [y/N] '
+IFS= read -r confirmed
+[[ "$confirmed" == "y" || "$confirmed" == "Y" ]] || exit 0
+
+SIGNALBOARDER_API_URL="${api_url%/}" pio run --target upload
+
+echo
+echo "Flashed. Press RESET once if the display stays blank."
+echo "Choose the station on the board: hold the station name, or open"
+echo "http://signalboarder.local from anything on the same network."
